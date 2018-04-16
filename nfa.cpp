@@ -106,6 +106,7 @@ void NFA::handleKeyword(const std::string& line)
 			i++;
 		}
 		//temp->print();
+		temp->end->isAcceptance = true;
 		temp->end->acceptanceType = keyword;
 		keyword = "";
 		collections.push_back(temp);
@@ -124,6 +125,7 @@ void NFA::handlePunc(const std::string& line)
 
 		inputs.insert(line[i]);
 		pAutomata temp = ThompsonConstruction::symbol(string(1, line[i]));
+		temp->end->isAcceptance = true;
 		temp->end->acceptanceType = line[i];
 		collections.push_back(temp);
 		//temp->print();

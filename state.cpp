@@ -1,12 +1,12 @@
 #include "state.h"
 
-State::State() : acceptanceType("")
+State::State() : isAcceptance(false), acceptanceType("")
 {
 	static unsigned int sid = 0;
 	id = sid++;
 }
 
-State::State(const State& n) : acceptanceType(n.acceptanceType), id(n.id), children(n.children) {}
+State::State(const State& n) : isAcceptance(n.isAcceptance), acceptanceType(n.acceptanceType), id(n.id), children(n.children) {}
 
 State::~State() {}
 
@@ -16,6 +16,7 @@ State& State::operator= (const State& n)
 		return (*this);
 
 	id = n.id;
+	isAcceptance = n.isAcceptance;
 	acceptanceType = n.acceptanceType;
 	children = n.children;
 
