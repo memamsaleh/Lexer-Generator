@@ -27,6 +27,8 @@ int main()
 	NFA nfa;
 	pAutomata p = nfa.getNFA("grammar.txt");
 
+	//pAutomata p = RegexEvaluater::evaluate("a-z");
+	//p->print();
 
 	std::cin.get();
 	return 0;

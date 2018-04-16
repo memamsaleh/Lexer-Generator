@@ -11,8 +11,38 @@ void findAndReplaceAll(std::string& line, std::string toSearch, std::string repl
 	while (pos != std::string::npos)
 	{
 		line.replace(pos, toSearch.size(), replaceStr);
-		pos = line.find(toSearch, pos + toSearch.size());
+		pos = line.find(toSearch, pos + replaceStr.size());
 	}
+}
+
+std::string regexConcatenate(const std::string& line)
+{
+	string newLine;
+	for (int i = 0; i < line.size(); i++)
+	{
+		newLine.push_back(line[i]);
+
+		if (line[i] == '(' || line[i] == '\\' || line[i] == '|' || line[i] == '-')
+			continue;
+
+		if(i + 1 < line.size())
+			if (line[i + 1] != '|' && line[i + 1] != '*' && line[i + 1] != '+' && line[i + 1] != ')' && line[i+1] != '-')
+				newLine.push_back('.');
+
+	}
+	return newLine;
+}
+
+pAutomata NFA::combineNFA()
+{
+	pState start(new State());
+	pState end(new State());
+	for (int i = 0; i < collections.size(); i++)
+	{
+		start->addChild(collections[i]->start, "\\L");
+		collections[i]->end->addChild(end, "\\L");
+	}
+	return pAutomata(new Automata(start, end));
 }
 
 pAutomata NFA::getNFA(const std::string& grammarPath)
@@ -47,9 +77,17 @@ pAutomata NFA::getNFA(const std::string& grammarPath)
 						findAndReplaceAll(rhs, itr->first, "(" + itr->second + ")");
 					}
 				}
-				pair<string, string> p(lhs, rhs);
-				expressions.insert(p);
+				findAndReplaceAll(rhs, ".", "\\.");
+				findAndReplaceAll(rhs, " ", "");
+				rhs = regexConcatenate(rhs);
 				//cout << lhs << "->" << rhs << endl;
+				pAutomata temp = RegexEvaluater::evaluate(rhs);
+				temp->end->isAcceptance = true;
+				temp->end->acceptanceType = lhs;
+				collections.push_back(temp);
+				//temp->print();
+				//pair<string, string> p(lhs, rhs);
+				//expressions.insert(p);
 			}
 			else if (dIndex != string::npos)
 			{
@@ -70,8 +108,7 @@ pAutomata NFA::getNFA(const std::string& grammarPath)
 			}
 		}
 		gFile.close();
-		handleRegex();
-		return pAutomata(new Automata());
+		return combineNFA();
 	}
 	else
 	{
@@ -132,7 +169,15 @@ void NFA::handlePunc(const std::string& line)
 	}
 }
 
-void NFA::handleRegex()
+/*
+pAutomata NFA::handleRegex(const string& line)
 {
-
+	cout << line << endl;
+	//string exp = RegexEvaluater::postFixConversion(line);
+	//cout << exp << endl;
+	pAutomata a = RegexEvaluater::evaluate(line);
+	//a->print();
+	//pAutomata a(new Automata());
+	return a;
 }
+*/
