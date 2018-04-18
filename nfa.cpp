@@ -81,9 +81,10 @@ pAutomata NFA::getNFA(const std::string& grammarPath)
 				findAndReplaceAll(rhs, " ", "");
 				rhs = regexConcatenate(rhs);
 				//cout << lhs << "->" << rhs << endl;
-				pAutomata temp = RegexEvaluater::evaluate(rhs);
+				pAutomata temp = RegexEvaluater::evaluate(rhs, inputs);
 				temp->end->isAcceptance = true;
 				temp->end->acceptanceType = lhs;
+				temp->end->acceptancePriority = 1;
 				collections.push_back(temp);
 				//temp->print();
 				//pair<string, string> p(lhs, rhs);
@@ -145,6 +146,7 @@ void NFA::handleKeyword(const std::string& line)
 		//temp->print();
 		temp->end->isAcceptance = true;
 		temp->end->acceptanceType = keyword;
+		temp->end->acceptancePriority = 3;
 		keyword = "";
 		collections.push_back(temp);
 	}
@@ -164,6 +166,7 @@ void NFA::handlePunc(const std::string& line)
 		pAutomata temp = ThompsonConstruction::symbol(string(1, line[i]));
 		temp->end->isAcceptance = true;
 		temp->end->acceptanceType = line[i];
+		temp->end->acceptancePriority = 2;
 		collections.push_back(temp);
 		//temp->print();
 	}

@@ -15,6 +15,7 @@ class State
 public:
 	bool isAcceptance = false;
 	std::string acceptanceType = "";
+	int acceptancePriority = -1;
 
 	// Constructors
 	State();                                           // Default Constructor
@@ -28,10 +29,10 @@ public:
 	std::map<std::string, std::vector<pState>>& getChildren();
 	void addChild(pState n, const std::string& val);
 	std::vector<pState> getChildren(const std::string& val);
-	int getId() const;
+	unsigned int getId() const;
 
 private:
-	int id;
+	unsigned int id;
 	std::map<std::string, std::vector<pState>> children;
 };
 
@@ -40,6 +41,6 @@ inline std::map<std::string, std::vector<pState>>& State::getChildren()
 	return children;
 }
 
-inline int State::getId() const { return id; }
+inline unsigned int State::getId() const { return id; }
 
 #endif

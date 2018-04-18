@@ -2,6 +2,8 @@
 #include "automata.h"
 #include "thompsonConstruction.h"
 #include "nfa.h"
+#include "dfa.h"
+#include "lexer.h"
 
 int main()
 {
@@ -26,6 +28,17 @@ int main()
 	//a.print();
 	NFA nfa;
 	pAutomata p = nfa.getNFA("grammar.txt");
+
+	DFA& d = DFA::getDFA();
+	d.createDFA(p, nfa.inputs);
+	Lexer l("input.txt");
+
+	Token t = l.getToken();
+	while (t.lexeme != "")
+	{
+		std::cout << t.lexeme << " " << t.type << std::endl;
+		t = l.getToken();
+	}
 
 	//pAutomata p = RegexEvaluater::evaluate("a-z");
 	//p->print();

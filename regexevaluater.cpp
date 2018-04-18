@@ -167,7 +167,7 @@ namespace RegexEvaluater
 		return op;
 	}
 
-	pAutomata evaluate(const string& exp)
+	pAutomata evaluate(const string& exp, std::set<char>& inputs)
 	{
 		string postFix = postFixConversion(exp);
 		pAutomata automata;
@@ -178,9 +178,11 @@ namespace RegexEvaluater
 		for (int i = 0; i < postFix.size(); i++)
 		{
 			char c = postFix[i];
+			inputs.insert(c);
 			if (c == '\\')
 			{
 				i++;
+				inputs.insert(postFix[i]);
 				pAutomata temp = ThompsonConstruction::symbol(string(1, postFix[i]));
 				opStack.push(temp);
 				continue;
@@ -202,6 +204,7 @@ namespace RegexEvaluater
 						for (int j = 1; j <= range; j++)
 						{
 							char debug = b + j;
+							inputs.insert(debug);
 							temp->start->addChild(temp->end, string(1, debug));
 						}
 						opStack.push(temp);

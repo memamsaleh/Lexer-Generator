@@ -27,6 +27,7 @@ void Automata::print()
 	std::queue<State> q;
 	q.push(*start);
 	q.push(*end);
+	// Mark visits to avoid infinite loops
 	while (!q.empty())
 	{
 		State temp = q.front();
