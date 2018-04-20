@@ -24,6 +24,7 @@ Automata::~Automata() {}
 
 void Automata::print()
 {
+	/*
 	std::queue<State> q;
 	q.push(*start);
 	q.push(*end);
@@ -32,8 +33,8 @@ void Automata::print()
 	{
 		State temp = q.front();
 		q.pop();
-		std::map<std::string, std::vector<pState>> tempC = temp.getChildren();
-		for (std::map<std::string, std::vector<pState>>::iterator it = tempC.begin(); it != tempC.end(); ++it)
+		std::map<std::string, std::set<pState>> tempC = temp.getChildren();
+		for (std::map<std::string, std::set<pState>>::iterator it = tempC.begin(); it != tempC.end(); ++it)
 		{
 			for (int i = 0; i < it->second.size(); i++)
 			{
@@ -43,5 +44,5 @@ void Automata::print()
 		}
 
 	}
-	
+	*/
 }

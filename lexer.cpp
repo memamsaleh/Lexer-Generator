@@ -1,5 +1,6 @@
 #include "lexer.h"
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 
@@ -28,6 +29,11 @@ Lexer::Lexer(const string& codePath)
 				if (c == ' ' || c == '\n')
 				{
 					Token t;
+					if (lastAcceptance == nullptr)
+					{
+						std::cout << "Error in Program File" << std::endl;
+						return;
+					}
 					t.type = lastAcceptance->acceptanceType;
 					t.lexeme = lexeme;
 					tokens.push_back(t);

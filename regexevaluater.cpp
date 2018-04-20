@@ -178,7 +178,6 @@ namespace RegexEvaluater
 		for (int i = 0; i < postFix.size(); i++)
 		{
 			char c = postFix[i];
-			inputs.insert(c);
 			if (c == '\\')
 			{
 				i++;
@@ -217,6 +216,7 @@ namespace RegexEvaluater
 			if ((c != '*') && (c != '+') && (c != '.') && (c != '|'))
 			{				
 				pAutomata temp = ThompsonConstruction::symbol(string(1, c));
+				inputs.insert(c);
 				opStack.push(temp);
 			}
 			else

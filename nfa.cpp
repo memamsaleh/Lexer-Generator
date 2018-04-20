@@ -35,14 +35,14 @@ std::string regexConcatenate(const std::string& line)
 
 pAutomata NFA::combineNFA()
 {
-	pState start(new State());
-	pState end(new State());
+	pState start = make_shared<State>(State());
+	pState end = make_shared<State>(State());
 	for (int i = 0; i < collections.size(); i++)
 	{
 		start->addChild(collections[i]->start, "\\L");
 		collections[i]->end->addChild(end, "\\L");
 	}
-	return pAutomata(new Automata(start, end));
+	return make_shared<Automata>(Automata(start, end));
 }
 
 pAutomata NFA::getNFA(const std::string& grammarPath)
@@ -114,7 +114,7 @@ pAutomata NFA::getNFA(const std::string& grammarPath)
 	else
 	{
 		cout << "File error" << endl;
-		return pAutomata(new Automata());
+		return nullptr;
 	}
 }
 
@@ -136,7 +136,7 @@ void NFA::handleKeyword(const std::string& line)
 		while (line[i] != ' ' && line[i] != '}')
 		{
 			keyword.push_back(line[i]);
-			pState s(new State());
+			pState s = make_shared<State>(State());
 			temp->end->addChild(s, string(1, line[i]));
 			temp->end = s;
 			//pAutomata temp2 = ThompsonConstruction::symbol(string(1, line[i]));

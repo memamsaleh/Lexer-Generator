@@ -2,6 +2,7 @@
 #define DFA_H
 
 #include <set>
+#include <vector>
 #include "thompsonConstruction.h"
 
 class DFAState;
@@ -15,10 +16,15 @@ public:
 	bool isAcceptance;
 
 	DFAState(std::set<pState> nfastates);
+	DFAState(const DFAState& d);
+	~DFAState();
+
+	DFAState& operator= (const DFAState& d);
 
 	inline unsigned int getId() { return id; }
 	inline bool isDead() { return states.empty(); }
-	inline bool isEqual(pDFAState other) { return states == other->states; }
+	inline bool operator==(pDFAState other) { return states == other->states; }
+	inline bool operator < (const pDFAState& d) const { return id < d->id; }
 	bool checkAcceptance();
 	pDFAState nextState(const std::string& input);
 private:
@@ -30,7 +36,7 @@ private:
 class DFA
 {
 public:
-	std::vector<pDFAState> states;
+	std::set<pDFAState> states;
 	pDFAState start;
 	std::map<std::pair<pDFAState, char>, pDFAState> transitionTable;
 
@@ -40,7 +46,7 @@ public:
 	void operator=(const DFA&) = delete;
 
 	void createDFA(pAutomata nfa, std::set<char> input);
-	pDFAState clearRepetition(pDFAState state);
+	bool inDFA(pDFAState state);
 	void printTransitionTable();
 
 private:
