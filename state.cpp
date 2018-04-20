@@ -1,11 +1,11 @@
 #include "state.h"
 #include <queue>
 
-unsigned int sid = 0;
+//unsigned int sid = 0;
 
 State::State() : acceptancePriority(-1), isAcceptance(false), acceptanceType("")
 {
-	//static unsigned int sid = 0;
+	static unsigned int sid = 0;
 	id = sid++;
 }
 
@@ -81,13 +81,14 @@ std::set<pState> State::getInputClosure(const std::string& val)
 		std::map<std::string, std::set<pState>>::iterator it = s->children.find(val);
 		if (it != s->children.end())
 			childs = s->children[val];
-		std::set<pState>::iterator itr = childs.begin();
-		for (itr; itr != childs.end(); ++itr)
+		//std::set<pState>::iterator itr = childs.begin();
+		//for (itr; itr != childs.end(); ++itr)
+		for(pState st : childs)
 		{
-			if (std::find(closure.begin(), closure.end(), *itr) == closure.end())
+			if (std::find(closure.begin(), closure.end(), st) == closure.end())
 			{
-				closure.insert(*itr);
-				q.push(*itr);
+				closure.insert(st);
+				q.push(st);
 			}
 		}
 	}

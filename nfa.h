@@ -22,7 +22,7 @@ public:
 private:
 	void handleKeyword(const std::string& line);
 	void handlePunc(const std::string& line);
-	pAutomata NFA::combineNFA();
+	pAutomata combineNFA();
 	//pAutomata handleRegex(const std::string& line);
 
 	std::map<std::string, std::string> definitions;

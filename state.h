@@ -5,6 +5,7 @@
 #include <set>
 #include <vector>
 #include <string>
+#include <algorithm>
 #include <memory>
 
 class State;
@@ -25,7 +26,7 @@ public:
 
 	// Operators
 	State& operator= (const State& n);                 // Assignment Operator
-	inline bool operator < (const pState& s) const { return id < s->id; }
+	//inline bool operator < (const pState& s) const { return id < s->id; }
 
 	// Functions
 	std::map<std::string, std::set<pState>>& getChildren();
