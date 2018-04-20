@@ -24,25 +24,28 @@ Automata::~Automata() {}
 
 void Automata::print()
 {
-	/*
-	std::queue<State> q;
-	q.push(*start);
-	q.push(*end);
-	// Mark visits to avoid infinite loops
+	std::queue<pState> q;
+	q.push(start);
+	q.push(end);
+	std::set<pState> visited;
 	while (!q.empty())
 	{
-		State temp = q.front();
+		pState temp = q.front();
+		visited.insert(temp);
 		q.pop();
-		std::map<std::string, std::set<pState>> tempC = temp.getChildren();
-		for (std::map<std::string, std::set<pState>>::iterator it = tempC.begin(); it != tempC.end(); ++it)
+		std::map<std::string, std::set<pState> > tempC = temp->getChildren();
+		for(std::pair<std::string, std::set<pState> > p : tempC)
 		{
-			for (int i = 0; i < it->second.size(); i++)
+			for (pState s : p.second)
 			{
-				q.push(*it->second[i]);
-				std::cout << temp.getId() << "<" << it->first << ">" << it->second[i]->getId() << std::endl;
+				if (std::find(visited.begin(), visited.end(), s) == visited.end())
+				{
+					q.push(s);
+					visited.insert(s);
+					std::cout << temp->getId() << "<" << p.first << ">" << s->getId() << std::endl;
+				}
 			}
 		}
 
 	}
-	*/
 }

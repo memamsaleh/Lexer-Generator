@@ -26,20 +26,19 @@ public:
 
 	// Operators
 	State& operator= (const State& n);                 // Assignment Operator
-	//inline bool operator < (const pState& s) const { return id < s->id; }
 
 	// Functions
-	std::map<std::string, std::set<pState>>& getChildren();
+	std::map<std::string, std::set<pState> >& getChildren();
 	void addChild(pState n, const std::string& val);
 	std::set<pState> getInputClosure(const std::string& val);
 	unsigned int getId() const;
 
 private:
 	unsigned int id;
-	std::map<std::string, std::set<pState>> children;
+	std::map<std::string, std::set<pState> > children;
 };
 
-inline std::map<std::string, std::set<pState>>& State::getChildren()
+inline std::map<std::string, std::set<pState> >& State::getChildren()
 {
 	return children;
 }

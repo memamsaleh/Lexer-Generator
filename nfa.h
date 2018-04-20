@@ -23,10 +23,8 @@ private:
 	void handleKeyword(const std::string& line);
 	void handlePunc(const std::string& line);
 	pAutomata combineNFA();
-	//pAutomata handleRegex(const std::string& line);
 
 	std::map<std::string, std::string> definitions;
-	//std::map<std::string, std::string> expressions;
 	std::vector<pAutomata> collections;
 };
 

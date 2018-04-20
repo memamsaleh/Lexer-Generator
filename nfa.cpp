@@ -54,7 +54,6 @@ pAutomata NFA::getNFA(const std::string& grammarPath)
 	{
 		while (getline(gFile, line))
 		{
-			//cout << line << endl;
 			size_t eIndex = line.find(":");
 			size_t dIndex = line.find("=");
 
@@ -80,15 +79,11 @@ pAutomata NFA::getNFA(const std::string& grammarPath)
 				findAndReplaceAll(rhs, ".", "\\.");
 				findAndReplaceAll(rhs, " ", "");
 				rhs = regexConcatenate(rhs);
-				//cout << lhs << "->" << rhs << endl;
 				pAutomata temp = RegexEvaluater::evaluate(rhs, inputs);
 				temp->end->isAcceptance = true;
 				temp->end->acceptanceType = lhs;
 				temp->end->acceptancePriority = 1;
 				collections.push_back(temp);
-				//temp->print();
-				//pair<string, string> p(lhs, rhs);
-				//expressions.insert(p);
 			}
 			else if (dIndex != string::npos)
 			{
@@ -105,7 +100,6 @@ pAutomata NFA::getNFA(const std::string& grammarPath)
 				}
 				pair<string, string> p(lhs, rhs);
 				definitions.insert(p);
-				//cout << lhs << "->" << rhs << endl;
 			}
 		}
 		gFile.close();
@@ -139,11 +133,8 @@ void NFA::handleKeyword(const std::string& line)
 			pState s = make_shared<State>(State());
 			temp->end->addChild(s, string(1, line[i]));
 			temp->end = s;
-			//pAutomata temp2 = ThompsonConstruction::symbol(string(1, line[i]));
-			//temp = ThompsonConstruction::concatenate(temp, temp2);
 			i++;
 		}
-		//temp->print();
 		temp->end->isAcceptance = true;
 		temp->end->acceptanceType = keyword;
 		temp->end->acceptancePriority = 3;
@@ -168,19 +159,5 @@ void NFA::handlePunc(const std::string& line)
 		temp->end->acceptanceType = line[i];
 		temp->end->acceptancePriority = 2;
 		collections.push_back(temp);
-		//temp->print();
 	}
 }
-
-/*
-pAutomata NFA::handleRegex(const string& line)
-{
-	cout << line << endl;
-	//string exp = RegexEvaluater::postFixConversion(line);
-	//cout << exp << endl;
-	pAutomata a = RegexEvaluater::evaluate(line);
-	//a->print();
-	//pAutomata a(new Automata());
-	return a;
-}
-*/

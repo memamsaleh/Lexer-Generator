@@ -24,8 +24,6 @@ public:
 	inline unsigned int getId() { return id; }
 	inline bool isDead() { return states.empty(); }
 	inline bool operator==(pDFAState other) { return states == other->states; }
-	//inline bool isEqual(pDFAState other) { return states == other->states; }
-	//inline bool operator < (const pDFAState& d) const { return id < d->id; }
 	bool checkAcceptance();
 	pDFAState nextState(const std::string& input);
 private:
