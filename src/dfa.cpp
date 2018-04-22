@@ -1,6 +1,6 @@
 #include "dfa.h"
 #include <queue>
-
+#include <fstream>
 #include <iostream>
 
 using namespace std;
@@ -13,7 +13,7 @@ DFAState::DFAState(set<pState> nfastates)
 	isAcceptance = checkAcceptance();
 }
 
-DFAState::DFAState(const DFAState& d) : id(d.id), states(d.states), neighbours(d.neighbours), acceptanceType(d.acceptanceType), isAcceptance(d.isAcceptance)
+DFAState::DFAState(const DFAState& d) : id(d.id), states(d.states), acceptanceType(d.acceptanceType), isAcceptance(d.isAcceptance)
 {
 
 }
@@ -27,7 +27,6 @@ DFAState& DFAState::operator= (const DFAState& d)
 
 	id = d.id;
 	states = d.states;
-	neighbours = d.neighbours;
 	acceptanceType = d.acceptanceType;
 	isAcceptance = d.isAcceptance;
 
@@ -160,5 +159,62 @@ bool DFA::inDFA(pDFAState state)
 
 void DFA::printTransitionTable()
 {
+	for (pair<pair< pDFAState, char>, pDFAState> p : transitionTable)
+	{
+		cout << p.first.first->getId() << " <" << p.first.second << "> " << p.second->getId() << endl;
+	}
+}
 
+void DFA::printTransitionTable(std::set<char> input)
+{
+	ofstream outFile;
+	outFile.open("transitionTable.txt");
+
+	outFile << "State |  ";
+	for (char c : input)
+	{
+		outFile << c << "  |  ";
+	}
+	//outFile << endl;
+
+	map<int, string> indexMap;
+
+	indexMap.insert(pair<int, string>(1, "D")); // Dead State
+
+	int index = 1;
+	string StateName = "";
+
+	for (pDFAState d : states)
+	{
+		StateName = "S" + std::to_string(index);
+		pair<int, string> p(d->getId(), StateName);
+		indexMap.insert(p);
+		index++;
+	}
+
+	int Id = -1;
+
+	for (pair<pair< pDFAState, char>, pDFAState> p : transitionTable)
+	{
+		int id = p.first.first->getId();
+		string name = indexMap[id];
+
+		if (Id != id)
+		{
+			Id = id;
+			outFile << endl << name;
+			for (int i = 0; i < 6 - name.size(); i++)
+				outFile << " ";
+			outFile << "|";
+		}
+
+		string name2 = indexMap[p.second->getId()];
+		outFile << " " << name2;
+		for (int i = 0; i < 4 - name2.size(); i++)
+			outFile << " ";
+		outFile << "|";
+		//outFile << "<" << p.first.second << "> " << indexMap[p.second->getId()] << " | ";
+	}
+
+	outFile.close();
 }

@@ -32,7 +32,6 @@ public:
 private:
 	unsigned int id;
 	std::set<pState> states;
-	std::map<std::string, pDFAState> neighbours;
 };
 
 class DFA
@@ -50,6 +49,7 @@ public:
 	void createDFA(pAutomata nfa, std::set<char> input);
 	bool inDFA(pDFAState state);
 	void printTransitionTable();
+	void printTransitionTable(std::set<char> input);
 
 private:
 	DFA();

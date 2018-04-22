@@ -14,6 +14,9 @@ int main()
 
 	DFA& d = DFA::getDFA();
 	d.createDFA(p, nfa.inputs);
+	
+	d.printTransitionTable(nfa.inputs);
+
 	Lexer l("input.txt");
 
 	Token t = l.getToken();
