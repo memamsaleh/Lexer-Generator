@@ -143,7 +143,7 @@ void DFA::createDFA(pAutomata nfa, std::set<char> input)
 	transitionTable = temp;
 }
 
-bool DFA::inDFA(pDFAState state)
+bool DFA::inDFA(pDFAState& state)
 {
 	bool repeated = false;
 	for(pDFAState s : states)
