@@ -19,10 +19,17 @@ int main()
 
 	Lexer l("input.txt");
 
+	std::cout << std::endl;
+	std::cout << "   Lexeme   |   Token" << std::endl;
+	std::cout << "   ---------|--------" << std::endl;
+
 	Token t = l.getToken();
 	while (t.lexeme != "")
 	{
-		std::cout << t.lexeme << " " << t.type << std::endl;
+		std::cout << "   " << t.lexeme;
+		for (int i = 0; i < 9 - t.lexeme.size(); i++)
+			std::cout << " ";
+		std::cout << "|   " << t.type << std::endl;
 		t = l.getToken();
 	}
 
