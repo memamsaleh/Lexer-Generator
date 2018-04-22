@@ -21,12 +21,13 @@ Lexer::Lexer(const string& codePath)
 			string lexeme = "";
 			string temp = "";
 			int aIndex = 0;
+			line += '\n';
 
 			for (int i = 0; i < line.size(); i++)
 			{
 				char c = line[i];
 
-				if (c == ' ' || c == '\n')
+				if (c == ' ' || c == '\n' || c == '\t')
 				{
 					Token t;
 					if (lastAcceptance == nullptr)
@@ -41,6 +42,8 @@ Lexer::Lexer(const string& codePath)
 					state = d.start;
 					lexeme = "";
 					temp = "";
+					if (c == '\n')
+						break;
 				}
 				else
 				{
