@@ -3,6 +3,7 @@
 
 #include <set>
 #include <vector>
+#include <iostream>
 #include "thompsonConstruction.h"
 
 class DFAState;
@@ -23,9 +24,11 @@ public:
 
 	inline unsigned int getId() { return id; }
 	inline bool isDead() { return states.empty(); }
-	inline bool operator==(pDFAState other) { return states == other->states; }
+	//inline bool isEqualTo(pDFAState other) { return states == other->states; }
+	bool isEqualTo(pDFAState other); // A problem with pointers and the < operator (This is a temporary fix)
 	bool checkAcceptance();
 	pDFAState nextState(const std::string& input);
+	inline void print() { for (pState s : states) std::cout << s->getId() << " "; std::cout << std::endl; }
 private:
 	unsigned int id;
 	std::set<pState> states;

@@ -10,6 +10,8 @@ int main()
 	NFA nfa;
 	pAutomata p = nfa.getNFA("grammar.txt");
 
+	//p->print();
+
 	DFA& d = DFA::getDFA();
 	d.createDFA(p, nfa.inputs);
 	Lexer l("input.txt");

@@ -62,7 +62,8 @@ std::set<pState> State::getInputClosure(const std::string& val)
 
 		for(pState st : childs)
 		{
-			if (std::find(closure.begin(), closure.end(), st) == closure.end())
+			//if (std::find(closure.begin(), closure.end(), st) == closure.end())
+			if(!inSet(st, closure))
 			{
 				closure.insert(st);
 				q.push(st);
@@ -70,4 +71,18 @@ std::set<pState> State::getInputClosure(const std::string& val)
 		}
 	}
 	return closure;
+}
+
+bool inSet(pState ps, std::set<pState> pset)
+{
+	bool in = false;
+	for (pState s : pset)
+	{
+		if (s->getId() == ps->getId())
+		{
+			in = true;
+			break;
+		}
+	}
+	return in;
 }

@@ -45,4 +45,6 @@ inline std::map<std::string, std::set<pState> >& State::getChildren()
 
 inline unsigned int State::getId() const { return id; }
 
+bool inSet(pState ps, std::set<pState> pset); // A problem with pointers and the < operator (This is a temporary fix)
+
 #endif

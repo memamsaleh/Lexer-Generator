@@ -38,7 +38,8 @@ void Automata::print()
 		{
 			for (pState s : p.second)
 			{
-				if (std::find(visited.begin(), visited.end(), s) == visited.end())
+				//if (std::find(visited.begin(), visited.end(), s) == visited.end())
+				if(!inSet(s, visited))
 				{
 					q.push(s);
 					visited.insert(s);

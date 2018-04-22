@@ -34,6 +34,22 @@ DFAState& DFAState::operator= (const DFAState& d)
 	return (*this);
 }
 
+bool DFAState::isEqualTo(pDFAState other)
+{
+	if (states.size() != other->states.size())
+		return false;
+
+	set<pState> others = other->states;
+
+	for (pState s : states)
+	{
+		if (!inSet(s, others))
+			return false;
+	}
+
+	return true;
+}
+
 bool DFAState::checkAcceptance()
 {
 	auto cmp = [](pair<int, string> left, pair<int, string> right) { return (left.first) < (right.first); };
@@ -133,7 +149,7 @@ bool DFA::inDFA(pDFAState state)
 	bool repeated = false;
 	for(pDFAState s : states)
 	{
-		if(s == state)
+		if(s->isEqualTo(state))
 		{
 			repeated = true;
 			state = s;
