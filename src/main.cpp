@@ -14,8 +14,13 @@ int main()
 
 	DFA& d = DFA::getDFA();
 	d.createDFA(p, nfa.inputs);
+
+	d.printTransitionTable("transitionTable.txt");
+
+	d.minimize();
+
+	d.printTransitionTable("minimizedTransitionTable.txt");
 	
-	d.printTransitionTable(nfa.inputs);
 
 	Lexer l("input.txt");
 

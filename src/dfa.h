@@ -15,6 +15,7 @@ class DFAState
 public:
 	std::string acceptanceType;
 	bool isAcceptance;
+	//int acceptancePriority; // For minimization
 
 	DFAState(std::set<pState> nfastates);
 	DFAState(const DFAState& d);
@@ -28,6 +29,7 @@ public:
 	bool isEqualTo(pDFAState other); // A problem with pointers and the < operator (This is a temporary fix)
 	bool checkAcceptance();
 	pDFAState nextState(const std::string& input);
+	inline const std::set<pState>& getStates() const { return states; }
 	inline void print() { for (pState s : states) std::cout << s->getId() << " "; std::cout << std::endl; }
 private:
 	unsigned int id;
@@ -47,15 +49,22 @@ public:
 	void operator=(const DFA&) = delete;
 
 	void createDFA(pAutomata nfa, std::set<char> input);
+	void minimize();
 	bool inDFA(pDFAState& state);
-	void printTransitionTable();
-	void printTransitionTable(std::set<char> input);
+	void printTransitionTable(const std::string& path);
 
 private:
 	DFA();
 	~DFA();
 
 	std::set<char> inputs;
+	// For Minimization
+	pDFAState deadState;
+
+	int getPartitionIndex(pDFAState d, const std::vector<std::set<pDFAState> >& partitions);
+	bool matchedNextStates(pDFAState d1, pDFAState d2, const std::vector<std::set<pDFAState> >& all);
+	void replaceWithMinimized(const std::vector<std::set<pDFAState> >& partitions);
+
 };
 
 #endif

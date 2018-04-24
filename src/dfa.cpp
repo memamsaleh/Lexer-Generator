@@ -67,6 +67,7 @@ bool DFAState::checkAcceptance()
 		return false;
 
 	acceptanceType = acceptance.top().second;
+	//acceptancePriority = acceptance.top().first;
 	return true;
 }
 
@@ -107,10 +108,10 @@ void DFA::createDFA(pAutomata nfa, std::set<char> input)
 	inputs = input;
 
 	states.insert(start);
-	pDFAState deadState = make_shared<DFAState>(DFAState(set<pState>()));
+	deadState = make_shared<DFAState>(DFAState(set<pState>()));
 	std::map<pair<pDFAState, char>, pDFAState> temp;
 
-	for(char c : input)
+	for(char c : inputs)
 	{
 		pair<pDFAState, char> key(deadState, c);
 		pair<pair<pDFAState, char>, pDFAState> p(key, deadState);
@@ -123,7 +124,7 @@ void DFA::createDFA(pAutomata nfa, std::set<char> input)
 	{
 		pDFAState s = q.front();
 		q.pop();
-		for(char c : input)
+		for(char c : inputs)
 		{
 			pair<pDFAState, char> key(s, c);
 			pDFAState newState = s->nextState(string(1, c));
@@ -157,21 +158,13 @@ bool DFA::inDFA(pDFAState& state)
 	return repeated;
 }
 
-void DFA::printTransitionTable()
-{
-	for (pair<pair< pDFAState, char>, pDFAState> p : transitionTable)
-	{
-		cout << p.first.first->getId() << " <" << p.first.second << "> " << p.second->getId() << endl;
-	}
-}
-
-void DFA::printTransitionTable(std::set<char> input)
+void DFA::printTransitionTable(const string& path)
 {
 	ofstream outFile;
-	outFile.open("transitionTable.txt");
+	outFile.open(path);
 
 	outFile << "State |  ";
-	for (char c : input)
+	for (char c : inputs)
 	{
 		outFile << c << "  |  ";
 	}
@@ -179,7 +172,7 @@ void DFA::printTransitionTable(std::set<char> input)
 
 	map<int, string> indexMap;
 
-	indexMap.insert(pair<int, string>(1, "D")); // Dead State
+	indexMap.insert(pair<int, string>(deadState->getId(), "D")); // Dead State
 
 	int index = 1;
 	string StateName = "";
@@ -217,4 +210,194 @@ void DFA::printTransitionTable(std::set<char> input)
 	}
 
 	outFile.close();
+}
+
+void DFA::minimize() 
+{
+	vector<set<pDFAState> > partitions;
+	partitions.push_back(set<pDFAState>()); // Final States
+	partitions.push_back(set<pDFAState>()); // Other States
+	for (pDFAState state : states)
+	{
+		if (state->isAcceptance)
+			partitions[0].insert(state);
+		else
+			partitions[1].insert(state);
+	}
+
+	bool changed = true;
+
+	while (changed) 
+	{
+		changed = false;
+		vector<set<pDFAState> > tempParts;
+		for (set<pDFAState> s : partitions)
+		{
+			if (s.size() == 1)
+			{
+				tempParts.push_back(s);
+				continue;
+			}
+
+			set<pDFAState> mainPart;
+			set<pDFAState> otherPart;
+			pDFAState first;
+			for (pDFAState state : s)
+			{
+				if (mainPart.empty())
+				{
+					first = state;
+					mainPart.insert(state);
+					continue;
+				}
+
+				if (matchedNextStates(first, state, partitions))
+					mainPart.insert(state);
+				else
+					otherPart.insert(state);
+			}
+
+			tempParts.push_back(mainPart);
+			if(!otherPart.empty())
+				tempParts.push_back(otherPart);
+		}
+
+		if (partitions.size() != tempParts.size())
+		{
+			changed = true;
+			partitions = tempParts;
+		}
+	}
+
+	replaceWithMinimized(partitions);
+}
+
+int DFA::getPartitionIndex(pDFAState d, const vector<set<pDFAState> >& partitions)
+{
+	int index = -1;
+
+	for (int i = 0; i < partitions.size(); i++)
+	{
+		for (pDFAState s : partitions[i])
+		{
+			if (d->isEqualTo(s))
+			{
+				index = i;
+				return index;
+			}
+		}
+	}
+
+	return index;
+}
+
+bool DFA::matchedNextStates(pDFAState d1, pDFAState d2, const vector<set<pDFAState> >& all)
+{
+	for (char c : inputs)
+	{
+		pDFAState next1 = d1->nextState(string(1, c));
+		pDFAState next2 = d2->nextState(string(1, c));
+		if (next1->isDead() && next2->isDead())
+			continue;
+
+		inDFA(next1);
+		inDFA(next2);
+		int id1 = getPartitionIndex(next1, all);
+		int id2 = getPartitionIndex(next2, all);
+		if (id1 != id2)
+			return false;
+		if (id1 == -1 || id2 == -1)
+			return false;
+	}
+
+	return true;
+}
+
+void DFA::replaceWithMinimized(const vector<set<pDFAState> >& partitions)
+{
+	set<pDFAState> newStates;
+	vector<vector<pair<char, int> > > indices;
+	vector<pDFAState> nexts;
+	//auto cmp = [](pair<int, string> left, pair<int, string> right) { return (left.first) < (right.first); };
+
+	for (int i = 0; i < partitions.size(); i++)
+	{
+		//priority_queue<pair<int, string>, vector<pair<int, string> >, decltype(cmp)> acceptance(cmp);
+		bool first = true;
+		set<pState> partition;
+		for (pDFAState s : partitions[i])
+		{
+			set<pState> temp = s->getStates();
+			partition.insert(temp.begin(), temp.end());
+
+			if (first)
+			{
+				vector<pair<char, int> > pairs;
+				for (char c : inputs)
+				{
+					pair<char, int> indx;
+					indx.first = c;
+					pDFAState next = s->nextState(string(1, c));
+					if (next->isDead())
+						indx.second = -1;
+					else
+					{
+						inDFA(next);
+						indx.second = getPartitionIndex(next, partitions);
+					}
+					pairs.push_back(indx);
+				}
+				first = false;
+				indices.push_back(pairs);
+			}
+
+			/*
+			if (s->isAcceptance)
+			{
+				pair<int, string> p(s->acceptancePriority, s->acceptanceType);
+				acceptance.push(p);
+			}
+			*/
+		}
+		pDFAState newState = make_shared<DFAState>(DFAState(partition));
+		/*
+		if (!acceptance.empty())
+		{
+			newState->acceptanceType = acceptance.top().second;
+			newState->acceptancePriority = acceptance.top().first;
+		}
+		*/
+		newStates.insert(newState);
+		nexts.push_back(newState);
+
+	}
+
+	map<pair<pDFAState, char>, pDFAState> newTransitionTable;
+
+	for (char c : inputs)
+	{
+		pair<pDFAState, char> key(deadState, c);
+		pair<pair<pDFAState, char>, pDFAState> p(key, deadState);
+		newTransitionTable.insert(p);
+	}
+
+	for (int i = 0; i < partitions.size(); i++)
+	{
+		vector<pair<char, int> > pairs = indices[i];
+		for (int j = 0; j < pairs.size(); j++)
+		{
+			pair<pDFAState, char> key(nexts[i], pairs[j].first);
+			int indx = pairs[j].second;
+
+			if(indx == -1)
+				newTransitionTable.insert(pair<pair<pDFAState, char>, pDFAState>(key, deadState));
+			else
+				newTransitionTable.insert(pair<pair<pDFAState, char>, pDFAState>(key, nexts[indx]));
+		}
+
+	}
+
+	start = nexts[getPartitionIndex(start, partitions)];
+	states = newStates;
+	transitionTable = newTransitionTable;
 }
