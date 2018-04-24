@@ -29,6 +29,9 @@ Lexer::Lexer(const string& codePath)
 
 				if (c == ' ' || c == '\n' || c == '\t')
 				{
+					if (temp == "")
+						continue;
+
 					Token t;
 					if (lastAcceptance == nullptr)
 					{
@@ -38,12 +41,10 @@ Lexer::Lexer(const string& codePath)
 					t.type = lastAcceptance->acceptanceType;
 					t.lexeme = lexeme;
 					tokens.push_back(t);
-					i = aIndex + 1;
+					i = aIndex;
 					state = d.start;
 					lexeme = "";
 					temp = "";
-					if (c == '\n')
-						break;
 				}
 				else
 				{
